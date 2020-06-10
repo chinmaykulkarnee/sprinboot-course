@@ -38,26 +38,4 @@ class SpringbootApplicationTest {
         Assertions.assertEquals("user1", user.getName());
         Assertions.assertEquals("user1@users.com", user.getEmail());
     }
-
-    @Test
-    void shouldReturnEmptyWhenUserNotPresentForGivenName() {
-        Optional<User> mayBeUser = userService.getUserByName("user2");
-        Assertions.assertFalse(mayBeUser.isPresent());
-    }
-
-    @Test
-    void shouldGetUserByNameAndEmail() {
-        userService.addUser("user3", "user3@users.com");
-        Optional<User> mayBeUser = userService.getUserByNameAndEmail("user3", "user3@users.com");
-        Assertions.assertTrue(mayBeUser.isPresent());
-        User user = mayBeUser.get();
-        Assertions.assertEquals("user3", user.getName());
-        Assertions.assertEquals("user3@users.com", user.getEmail());
-    }
-
-    @Test
-    void shouldReturnEmptyWhenUserNotPresentForGivenNameAndEmail() {
-        Optional<User> mayBeUser = userService.getUserByNameAndEmail("user3", "user3@users.com");
-        Assertions.assertFalse(mayBeUser.isPresent());
-    }
 }
