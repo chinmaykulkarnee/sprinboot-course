@@ -3,11 +3,6 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- TODO: Add a spring boot starter parent pom reference for spring boot project
- 	This helps us with managing dependency versions, the java version used by project and
- 	the default configuration for plug-ins
- 	use version = 2.3.0.RELEASE
- 	-->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
@@ -25,14 +20,20 @@
 	</properties>
 
 	<dependencies>
-		<!-- TODO: Add spring-boot-starter dependency - which is the most basic spring boot starter
+		<!-- TODO: Add spring boot starter dependency for spring-data-jpa
 		Note: you do not have to specify the version since it is already taken care by the parent pam -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 
-		<!-- TODO: Configure this dependency to be used only in the test scope -->
+		<!-- Notice that you do not have to specify the version since it is already taken care by the parent pam -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
