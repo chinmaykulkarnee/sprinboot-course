@@ -1,28 +1,32 @@
 package com.upgrad.course;
 
-import com.upgrad.course.entity.User;
-import com.upgrad.course.repository.UserRepository;
-import com.upgrad.course.service.UserService;
+import com.upgrad.course.entity.Order;
+import com.upgrad.course.repository.OrderRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import java.util.Optional;
-
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SpringbootApplicationTest {
 
-    @Autowired
-    private UserService userService;
+    @LocalServerPort
+    int randomServerPort;
 
     @Autowired
-    private UserRepository userRepository;
+    TestRestTemplate testRestTemplate;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @BeforeEach
     void clean() {
-        userRepository.deleteAll();
+        orderRepository.deleteAll();
     }
 
     @Test
@@ -30,34 +34,22 @@ class SpringbootApplicationTest {
     }
 
     @Test
-    void shouldGetUserByName() {
-        userService.addUser("user1", "user1@users.com");
-        Optional<User> mayBeUser = userService.getUserByName("user1");
-        Assertions.assertTrue(mayBeUser.isPresent());
-        User user = mayBeUser.get();
-        Assertions.assertEquals("user1", user.getName());
-        Assertions.assertEquals("user1@users.com", user.getEmail());
+    void shouldReturnOrderByOrderId() {
+        Order savedOrder = orderRepository.save(new Order("userId1", 100.0));
+        final String baseUrl = "http://localhost:" + randomServerPort + "/api/v1";
+        ResponseEntity<Order> response = testRestTemplate.getForEntity(baseUrl + "/orders/" + savedOrder.getId(), Order.class);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Order order = response.getBody();
+        Assertions.assertNotNull(order);
+        Assertions.assertEquals(savedOrder.getId(), order.getId());
+        Assertions.assertEquals(savedOrder.getUserId(), order.getUserId());
+        Assertions.assertEquals(savedOrder.getAmount(), order.getAmount());
     }
 
     @Test
-    void shouldReturnEmptyWhenUserNotPresentForGivenName() {
-        Optional<User> mayBeUser = userService.getUserByName("user2");
-        Assertions.assertFalse(mayBeUser.isPresent());
-    }
-
-    @Test
-    void shouldGetUserByNameAndEmail() {
-        userService.addUser("user3", "user3@users.com");
-        Optional<User> mayBeUser = userService.getUserByNameAndEmail("user3", "user3@users.com");
-        Assertions.assertTrue(mayBeUser.isPresent());
-        User user = mayBeUser.get();
-        Assertions.assertEquals("user3", user.getName());
-        Assertions.assertEquals("user3@users.com", user.getEmail());
-    }
-
-    @Test
-    void shouldReturnEmptyWhenUserNotPresentForGivenNameAndEmail() {
-        Optional<User> mayBeUser = userService.getUserByNameAndEmail("user3", "user3@users.com");
-        Assertions.assertFalse(mayBeUser.isPresent());
+    void shouldReturn404ResponseWhenOrderNotFoundByOrderId() {
+        final String baseUrl = "http://localhost:" + randomServerPort + "/api/v1";
+        ResponseEntity<Order> response = testRestTemplate.getForEntity(baseUrl + "/orders/" + 123, Order.class);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

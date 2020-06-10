@@ -9,8 +9,6 @@ import org.springframework.context.annotation.Bean;
 import java.util.Arrays;
 import java.util.List;
 
-// TODO: Mark this class as a Spring boot application using correct annotation
-// This will automatically scan Entity, Repository and Service components and creates beans for them
 @SpringBootApplication
 public class SpringbootApplication {
 
@@ -26,8 +24,9 @@ public class SpringbootApplication {
 			System.out.println("Let's inspect the beans initialized by Spring Boot:");
 
 			List<String> beanNames = Arrays.asList(ctx.getBeanDefinitionNames());
-			System.out.println("Repository bean created : " + beanNames.contains("userRepository"));
-			System.out.println("Service bean created : " + beanNames.contains("userService"));
+			System.out.println("Repository bean created : " + beanNames.contains("orderRepository"));
+			System.out.println("Service bean created : " + beanNames.contains("orderService"));
+			System.out.println("Controller bean created : " + beanNames.contains("orderController"));
 		};
 	}
 }
