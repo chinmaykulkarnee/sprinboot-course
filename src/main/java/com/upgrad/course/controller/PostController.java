@@ -1,12 +1,13 @@
 package com.upgrad.course.controller;
 
-import com.upgrad.course.entity.Comment;
-import com.upgrad.course.entity.Like;
+import com.upgrad.course.entity.Post;
 import com.upgrad.course.service.PostService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -18,16 +19,20 @@ public class PostController {
         this.postService = postService;
     }
 
-    // TODO: Define API Endpoint for getting comments of a post with limit
-    //  Use RequestMapping annotation
-    //  Define "postId" as a path parameter (Note: use plural value for the post resource in the path)
-    //  Define "limit" as a query parameter and use appropriate annotation to receive it as a method argument
-    @RequestMapping("/posts/{postId}/comments")
-    public ResponseEntity<List<Comment>> getCommentsForPostWithLimit(@PathVariable String postId, @RequestParam("limit") int limit) {
+    // TODO: Define API Endpoint for adding a new post
+    //  Use PostMapping annotation
+    //  Use appropriate annotation to receive the request body as a method argument
+    @PostMapping("/posts")
+    public ResponseEntity<Long> getCommentsForPostWithLimit(@RequestBody Post post) {
 
-        // TODO: Call service method to get the comments of a post using postId and limit
-        //  Return 200 OK response with the body as List<Comment> got from the service
-        List<Comment> comments = postService.getCommentsForPostWithLimit(Long.parseLong(postId), limit);
-        return ResponseEntity.ok(comments);
+        // TODO: Call service method to add a new post
+        //  Return 201 CREATED response when service returns true as status
+        //  Return 409 CONFLICT response when service returns false as status
+        boolean status = postService.addPost(post);
+        if (status) {
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 }

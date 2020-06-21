@@ -1,6 +1,5 @@
 package com.upgrad.course;
 
-import com.upgrad.course.entity.Comment;
 import com.upgrad.course.entity.Post;
 import com.upgrad.course.repository.PostRepository;
 import org.junit.jupiter.api.Assertions;
@@ -12,10 +11,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SpringbootApplicationTest {
@@ -35,49 +30,24 @@ class SpringbootApplicationTest {
     }
 
     @Test
-    void shouldReturnThreeCommentsWhenLimitIsThreeEvenWhenFiveCommentsExistForPost() {
+    public void shouldReturn201WithPostIdWhenPostIsCreatedSuccessfully() {
         Post postToSave = new Post("userId1", "Moved to Mumbai");
-        ArrayList<Comment> comments = new ArrayList<>();
-        comments.add(new Comment("user1"));
-        comments.add(new Comment("user2"));
-        comments.add(new Comment("user3"));
-        comments.add(new Comment("user4"));
-        comments.add(new Comment("user5"));
-        postToSave.setComments(comments);
-        Post savedPost = postRepository.save(postToSave);
 
         final String baseUrl = "http://localhost:" + randomServerPort + "/api/v1";
-        ResponseEntity<Comment[]> response = testRestTemplate.getForEntity(baseUrl + "/posts/" + savedPost.getId() + "/comments?limit=3", Comment[].class);
+        ResponseEntity<Long> response = testRestTemplate.postForEntity(baseUrl + "/posts", postToSave, Long.class);
 
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        List<Comment> commentsResponse = Arrays.asList(response.getBody());
-        Assertions.assertEquals(3, commentsResponse.size());
+        Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
-    void shouldReturnTwoCommentsWhenLimitIsThreeButOnlyTwoCommentsExistForPost() {
+    public void shouldReturnFailureIfPostWasAlreadyPresent() {
         Post postToSave = new Post("userId1", "Moved to Mumbai");
-        ArrayList<Comment> comments = new ArrayList<>();
-        comments.add(new Comment("user1"));
-        comments.add(new Comment("user2"));
-        postToSave.setComments(comments);
-        Post savedPost = postRepository.save(postToSave);
 
         final String baseUrl = "http://localhost:" + randomServerPort + "/api/v1";
-        ResponseEntity<Comment[]> response = testRestTemplate.getForEntity(baseUrl + "/posts/" + savedPost.getId() + "/comments?limit=3", Comment[].class);
+        ResponseEntity<Long> response1 = testRestTemplate.postForEntity(baseUrl + "/posts", postToSave, Long.class);
+        Assertions.assertEquals(HttpStatus.CREATED, response1.getStatusCode());
 
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        List<Comment> commentsResponse = Arrays.asList(response.getBody());
-        Assertions.assertEquals(2, commentsResponse.size());
-    }
-
-    @Test
-    void shouldReturnEmptyListOfCommentsWhenPostIsNotPresent() {
-        final String baseUrl = "http://localhost:" + randomServerPort + "/api/v1";
-        ResponseEntity<Comment[]> response = testRestTemplate.getForEntity(baseUrl + "/posts/123/comments?limit=5", Comment[].class);
-
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        List<Comment> comments = Arrays.asList(response.getBody());
-        Assertions.assertEquals(0, comments.size());
+        ResponseEntity<Long> response2 = testRestTemplate.postForEntity(baseUrl + "/posts", postToSave, Long.class);
+        Assertions.assertEquals(HttpStatus.CONFLICT, response2.getStatusCode());
     }
 }
