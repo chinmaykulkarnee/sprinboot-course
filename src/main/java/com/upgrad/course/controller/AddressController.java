@@ -20,13 +20,13 @@ public class AddressController {
     //  Use PutMapping annotation
     //  Use appropriate annotation to receive the path variable "addressId" as a method argument
     //  Use appropriate annotation to receive the request body as a method argument
-    @PutMapping("/addresses/{addressId}")
-    public ResponseEntity updateAddress(@PathVariable Long addressId, @RequestBody Address address) {
+    @PatchMapping("/addresses/{addressId}")
+    public ResponseEntity updateAddress(@PathVariable Long addressId, @RequestBody Address request) {
 
         // TODO: Call service method to update the address
-        //  Return 201 CREATED response when service returns true as status
+        //  Return 200 OK response when service returns true as status
         //  Return 403 FORBIDDEN response when service returns false as status
-        boolean status = addressService.updateAddress(addressId, address);
+        boolean status = addressService.updateAddressCity(addressId, request.getCity());
         if (status) {
             return ResponseEntity.status(HttpStatus.OK).build();
         } else {

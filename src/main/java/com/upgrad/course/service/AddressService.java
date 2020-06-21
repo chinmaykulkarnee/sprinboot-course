@@ -18,18 +18,11 @@ public class AddressService {
     }
 
     @Transactional
-    public boolean updateAddress(Long addressId, Address address) {
+    public boolean updateAddressCity(Long addressId, String city) {
         if (addressRepository.findById(addressId).isPresent()) {
 
             // TODO: Use repository method to update the address when address already exists
-            addressRepository.update(
-                    address.getHouseNumber(),
-                    address.getStreetName(),
-                    address.getCity(),
-                    address.getState(),
-                    address.getPinCode(),
-                    addressId
-            );
+            addressRepository.updateCity(city, addressId);
             return true;
         }
         return false;
