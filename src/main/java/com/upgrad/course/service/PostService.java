@@ -1,5 +1,6 @@
 package com.upgrad.course.service;
 
+import com.upgrad.course.entity.Comment;
 import com.upgrad.course.entity.Like;
 import com.upgrad.course.entity.Post;
 import com.upgrad.course.repository.PostRepository;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -20,17 +21,17 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    // TODO: Use repository to get post by id
-    public Optional<Post> getPostById(Long postId) {
-        return this.postRepository.findById(postId);
-    }
+    public List<Comment> getCommentsForPostWithLimit(Long postId, int limit) {
+        List<Comment> comments;
 
-    // TODO: Use repository to get likes of a post by id (the post repository method returns an Optional<Post> object)
-    //  Return list of likes when post is present
-    //  Return empty list when post is absent
-    public List<Like> getLikesForPost(Long postId) {
-        return this.postRepository.findById(postId)
-                .map(Post::getLikes)
+        // TODO: Use repository to get comments of a post by id (the post repository method returns an Optional<Post> object)
+        //  Assign the comments to comments variable defined above
+        //  Assign list of comments got from the repository when post is present
+        //  Assign empty list when post is absent
+        comments = this.postRepository.findById(postId)
+                .map(Post::getComments)
                 .orElse(Collections.emptyList());
+
+        return comments.stream().limit(limit).collect(Collectors.toList());
     }
 }

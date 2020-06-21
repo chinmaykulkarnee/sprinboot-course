@@ -1,16 +1,12 @@
 package com.upgrad.course.controller;
 
+import com.upgrad.course.entity.Comment;
 import com.upgrad.course.entity.Like;
-import com.upgrad.course.entity.Post;
 import com.upgrad.course.service.PostService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -22,29 +18,16 @@ public class PostController {
         this.postService = postService;
     }
 
-    // TODO: Define API Endpoint for getting post details by postId
-    //  Use GetMapping annotation
-    //  Define postId as a path parameter
-    //  Note: use plural value for the post resource in the path
-    @GetMapping("/posts/{postId}")
-    // TODO: Use correct annotation and variable name to receiving the path variable value as a method argument
-    public ResponseEntity<Post> getPost(@PathVariable String postId) {
+    // TODO: Define API Endpoint for getting comments of a post with limit
+    //  Use RequestMapping annotation
+    //  Define "postId" as a path parameter (Note: use plural value for the post resource in the path)
+    //  Define "limit" as a query parameter and use appropriate annotation to receive it as a method argument
+    @RequestMapping("/posts/{postId}/comments")
+    public ResponseEntity<List<Comment>> getCommentsForPostWithLimit(@PathVariable String postId, @RequestParam("limit") int limit) {
 
-        // TODO: Call service method to get the post using postId
-        //  Return 200 OK response with the body as Post object if found
-        //  Return 404 Not Found response with no body when post is not found
-        Optional<Post> mayBePost = postService.getPostById(Long.parseLong(postId));
-        return mayBePost
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/posts/{postId}/likes")
-    public ResponseEntity<List<Like>> getLikesForPost(@PathVariable String postId) {
-
-        // TODO: Call service method to get the likes of a post using postId
-        //  Return 200 OK response with the body as List<Like> got from the service
-        List<Like> likes = postService.getLikesForPost(Long.parseLong(postId));
-        return ResponseEntity.ok(likes);
+        // TODO: Call service method to get the comments of a post using postId and limit
+        //  Return 200 OK response with the body as List<Comment> got from the service
+        List<Comment> comments = postService.getCommentsForPostWithLimit(Long.parseLong(postId), limit);
+        return ResponseEntity.ok(comments);
     }
 }

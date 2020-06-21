@@ -1,7 +1,6 @@
 package com.upgrad.course;
 
 import com.upgrad.course.entity.Comment;
-import com.upgrad.course.entity.Like;
 import com.upgrad.course.entity.Post;
 import com.upgrad.course.repository.PostRepository;
 import org.junit.jupiter.api.Assertions;
@@ -14,8 +13,8 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -36,55 +35,49 @@ class SpringbootApplicationTest {
     }
 
     @Test
-    void shouldReturnPostByPostId() {
+    void shouldReturnThreeCommentsWhenLimitIsThreeEvenWhenFiveCommentsExistForPost() {
         Post postToSave = new Post("userId1", "Moved to Mumbai");
-        postToSave.setLikes(Collections.singletonList(new Like("user2")));
-        postToSave.setComments(Collections.singletonList(new Comment("user3")));
+        ArrayList<Comment> comments = new ArrayList<>();
+        comments.add(new Comment("user1"));
+        comments.add(new Comment("user2"));
+        comments.add(new Comment("user3"));
+        comments.add(new Comment("user4"));
+        comments.add(new Comment("user5"));
+        postToSave.setComments(comments);
         Post savedPost = postRepository.save(postToSave);
 
         final String baseUrl = "http://localhost:" + randomServerPort + "/api/v1";
-        ResponseEntity<Post> response = testRestTemplate.getForEntity(baseUrl + "/posts/" + savedPost.getId(), Post.class);
+        ResponseEntity<Comment[]> response = testRestTemplate.getForEntity(baseUrl + "/posts/" + savedPost.getId() + "/comments?limit=3", Comment[].class);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Post post = response.getBody();
-        Assertions.assertNotNull(post);
-        Assertions.assertEquals(savedPost.getId(), post.getId());
-        Assertions.assertEquals(savedPost.getUserId(), post.getUserId());
-        Assertions.assertEquals(savedPost.getMessage(), post.getMessage());
-        Assertions.assertEquals(1, post.getLikes().size());
-        Assertions.assertEquals(1, post.getComments().size());
+        List<Comment> commentsResponse = Arrays.asList(response.getBody());
+        Assertions.assertEquals(3, commentsResponse.size());
     }
 
     @Test
-    void shouldReturn404ResponseWhenPostNotFoundByPostId() {
-        final String baseUrl = "http://localhost:" + randomServerPort + "/api/v1";
-        ResponseEntity<Post> response = testRestTemplate.getForEntity(baseUrl + "/posts/" + 123, Post.class);
-        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    @Test
-    void shouldReturnListOfLikesWhenPresentForPost() {
+    void shouldReturnTwoCommentsWhenLimitIsThreeButOnlyTwoCommentsExistForPost() {
         Post postToSave = new Post("userId1", "Moved to Mumbai");
-        postToSave.setLikes(Collections.singletonList(new Like("user2")));
+        ArrayList<Comment> comments = new ArrayList<>();
+        comments.add(new Comment("user1"));
+        comments.add(new Comment("user2"));
+        postToSave.setComments(comments);
         Post savedPost = postRepository.save(postToSave);
 
         final String baseUrl = "http://localhost:" + randomServerPort + "/api/v1";
-        ResponseEntity<Like[]> response = testRestTemplate.getForEntity(baseUrl + "/posts/" + savedPost.getId() + "/likes", Like[].class);
+        ResponseEntity<Comment[]> response = testRestTemplate.getForEntity(baseUrl + "/posts/" + savedPost.getId() + "/comments?limit=3", Comment[].class);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        List<Like> likes = Arrays.asList(response.getBody());
-        Assertions.assertEquals(1, likes.size());
-        Like firstLike = likes.get(0);
-        Assertions.assertEquals(firstLike.getLikedByUserId(), "user2");
+        List<Comment> commentsResponse = Arrays.asList(response.getBody());
+        Assertions.assertEquals(2, commentsResponse.size());
     }
 
     @Test
-    void shouldReturnEmptyListOfLikesWhenPostIsNotPresent() {
+    void shouldReturnEmptyListOfCommentsWhenPostIsNotPresent() {
         final String baseUrl = "http://localhost:" + randomServerPort + "/api/v1";
-        ResponseEntity<Like[]> response = testRestTemplate.getForEntity(baseUrl + "/posts/123/likes", Like[].class);
+        ResponseEntity<Comment[]> response = testRestTemplate.getForEntity(baseUrl + "/posts/123/comments?limit=5", Comment[].class);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        List<Like> likes = Arrays.asList(response.getBody());
-        Assertions.assertEquals(0, likes.size());
+        List<Comment> comments = Arrays.asList(response.getBody());
+        Assertions.assertEquals(0, comments.size());
     }
 }
