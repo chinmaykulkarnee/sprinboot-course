@@ -1,7 +1,7 @@
 package com.upgrad.course;
 
-import com.upgrad.course.entity.Post;
-import com.upgrad.course.repository.PostRepository;
+import com.upgrad.course.entity.Address;
+import com.upgrad.course.repository.AddressRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SpringbootApplicationTest {
@@ -22,32 +21,53 @@ class SpringbootApplicationTest {
     TestRestTemplate testRestTemplate;
 
     @Autowired
-    private PostRepository postRepository;
+    private AddressRepository addressRepository;
 
     @BeforeEach
     void clean() {
-        postRepository.deleteAll();
+        addressRepository.deleteAll();
     }
 
     @Test
-    public void shouldReturn201WithPostIdWhenPostIsCreatedSuccessfully() {
-        Post postToSave = new Post("userId1", "Moved to Mumbai");
+    public void shouldReturn200WhenAddressIsUpdatedSuccessfully() {
+        Address address = new Address("58", "High Street", "Mumbai", "Maharashtra", 400001);
+        Address savedAddress = addressRepository.save(address);
 
         final String baseUrl = "http://localhost:" + randomServerPort + "/api/v1";
-        ResponseEntity<Long> response = testRestTemplate.postForEntity(baseUrl + "/posts", postToSave, Long.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Address> entity = new HttpEntity<>(address, headers);
+        ResponseEntity<Void> response = testRestTemplate.exchange(baseUrl + "/addresses/{addressId}", HttpMethod.PUT, entity, Void.class, savedAddress.getId());
 
-        Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
-    public void shouldReturnFailureIfPostWasAlreadyPresent() {
-        Post postToSave = new Post("userId1", "Moved to Mumbai");
+    public void shouldReturn200EvenWhenAddressIsUpdatedMultipleTimes() {
+        Address address = new Address("58", "High Street", "Mumbai", "Maharashtra", 400001);
+        Address savedAddress = addressRepository.save(address);
 
         final String baseUrl = "http://localhost:" + randomServerPort + "/api/v1";
-        ResponseEntity<Long> response1 = testRestTemplate.postForEntity(baseUrl + "/posts", postToSave, Long.class);
-        Assertions.assertEquals(HttpStatus.CREATED, response1.getStatusCode());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Address> entity = new HttpEntity<>(address, headers);
 
-        ResponseEntity<Long> response2 = testRestTemplate.postForEntity(baseUrl + "/posts", postToSave, Long.class);
-        Assertions.assertEquals(HttpStatus.CONFLICT, response2.getStatusCode());
+        ResponseEntity<Void> response1 = testRestTemplate.exchange(baseUrl + "/addresses/{addressId}", HttpMethod.PUT, entity, Void.class, savedAddress.getId());
+        Assertions.assertEquals(HttpStatus.OK, response1.getStatusCode());
+        ResponseEntity<Void> response2 = testRestTemplate.exchange(baseUrl + "/addresses/{addressId}", HttpMethod.PUT, entity, Void.class, savedAddress.getId());
+        Assertions.assertEquals(HttpStatus.OK, response2.getStatusCode());
+    }
+
+    @Test
+    public void shouldReturnFailureIfAddressDoesNotExist() {
+        Address address = new Address("58", "High Street", "Mumbai", "Maharashtra", 400001);
+
+        final String baseUrl = "http://localhost:" + randomServerPort + "/api/v1";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Address> entity = new HttpEntity<>(address, headers);
+        ResponseEntity<Void> response = testRestTemplate.exchange(baseUrl + "/addresses/{addressId}", HttpMethod.PUT, entity, Void.class, 123L);
+
+        Assertions.assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
 }
