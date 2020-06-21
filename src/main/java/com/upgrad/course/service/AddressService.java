@@ -1,6 +1,5 @@
 package com.upgrad.course.service;
 
-import com.upgrad.course.entity.Address;
 import com.upgrad.course.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,11 +17,11 @@ public class AddressService {
     }
 
     @Transactional
-    public boolean updateAddressCity(Long addressId, String city) {
+    public boolean deleteAddress(Long addressId) {
         if (addressRepository.findById(addressId).isPresent()) {
 
-            // TODO: Use repository method to update the address when address already exists
-            addressRepository.updateCity(city, addressId);
+            // TODO: Use repository method to delete the address by addressId when address already exists
+            addressRepository.deleteById(addressId);
             return true;
         }
         return false;

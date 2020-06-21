@@ -17,16 +17,15 @@ public class AddressController {
     }
 
     // TODO: Define API Endpoint for updating an address
-    //  Use PutMapping annotation
+    //  Use DeleteMapping annotation
     //  Use appropriate annotation to receive the path variable "addressId" as a method argument
-    //  Use appropriate annotation to receive the request body as a method argument
-    @PatchMapping("/addresses/{addressId}")
-    public ResponseEntity updateAddress(@PathVariable Long addressId, @RequestBody Address request) {
+    @DeleteMapping("/addresses/{addressId}")
+    public ResponseEntity deleteAddress(@PathVariable Long addressId) {
 
-        // TODO: Call service method to update the address
+        // TODO: Call service method to delete the address
         //  Return 200 OK response when service returns true as status
         //  Return 403 FORBIDDEN response when service returns false as status
-        boolean status = addressService.updateAddressCity(addressId, request.getCity());
+        boolean status = addressService.deleteAddress(addressId);
         if (status) {
             return ResponseEntity.status(HttpStatus.OK).build();
         } else {
