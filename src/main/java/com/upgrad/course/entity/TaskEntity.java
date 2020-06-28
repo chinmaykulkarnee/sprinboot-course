@@ -6,31 +6,28 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity
-public class PostEntity {
+public class TaskEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String userId;
 
+    @Column(unique = true)
     private String message;
 
     private Instant createdAt;
 
-    @ElementCollection
-    private List<LikeEntity> likeEntities;
+    private Status status;
 
-    @ElementCollection
-    private List<CommentEntity> commentEntities;
-
-    public PostEntity() {
+    public TaskEntity() {
     }
 
-    public PostEntity(String userId, String message) {
+    public TaskEntity(String userId, String message) {
         this.userId = userId;
         this.message = message;
         this.createdAt = Instant.now();
-        this.likeEntities = Collections.emptyList();
+        this.status = Status.PENDING;
     }
 
     public Long getId() {
@@ -65,19 +62,11 @@ public class PostEntity {
         this.createdAt = createdAt;
     }
 
-    public List<LikeEntity> getLikeEntities() {
-        return likeEntities;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setLikeEntities(List<LikeEntity> likeEntities) {
-        this.likeEntities = likeEntities;
-    }
-
-    public List<CommentEntity> getCommentEntities() {
-        return commentEntities;
-    }
-
-    public void setCommentEntities(List<CommentEntity> commentEntities) {
-        this.commentEntities = commentEntities;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
