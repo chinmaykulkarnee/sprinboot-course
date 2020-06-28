@@ -1,20 +1,20 @@
-package com.upgrad.course.entity;
+package com.upgrad.course.dto.entity;
 
-import javax.persistence.Embeddable;
+import com.upgrad.course.entity.LikeEntity;
+
 import java.time.Instant;
 
-@Embeddable
-public class Like {
+public class LikeDto {
     private String likedByUserId;
 
     private Instant likedAt;
 
-    public Like() {
+    public LikeDto() {
     }
 
-    public Like(String likedByUserId) {
+    public LikeDto(String likedByUserId, Instant likedAt) {
         this.likedByUserId = likedByUserId;
-        this.likedAt = Instant.now();
+        this.likedAt = likedAt;
     }
 
     public String getLikedByUserId() {
@@ -31,5 +31,9 @@ public class Like {
 
     public void setLikedAt(Instant likedAt) {
         this.likedAt = likedAt;
+    }
+
+    public static LikeDto buildFrom(LikeEntity entity) {
+        return new LikeDto(entity.getLikedByUserId(), entity.getLikedAt());
     }
 }

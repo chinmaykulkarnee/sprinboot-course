@@ -4,17 +4,28 @@ import javax.persistence.Embeddable;
 import java.time.Instant;
 
 @Embeddable
-public class Comment {
+public class CommentEntity {
+    private Long id;
+
     private String commentedByUserId;
 
     private Instant commentedAt;
 
-    public Comment() {
+    public CommentEntity() {
     }
 
-    public Comment(String commentedByUserId) {
+    public CommentEntity(Long id, String commentedByUserId) {
+        this.id = id;
         this.commentedByUserId = commentedByUserId;
         this.commentedAt = Instant.now();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCommentedByUserId() {

@@ -2,12 +2,11 @@ package com.upgrad.course.entity;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 @Entity
-public class Post {
+public class PostEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -19,19 +18,19 @@ public class Post {
     private Instant createdAt;
 
     @ElementCollection
-    private List<Like> likes;
+    private List<LikeEntity> likeEntities;
 
     @ElementCollection
-    private List<Comment> comments;
+    private List<CommentEntity> commentEntities;
 
-    public Post() {
+    public PostEntity() {
     }
 
-    public Post(String userId, String message) {
+    public PostEntity(String userId, String message) {
         this.userId = userId;
         this.message = message;
         this.createdAt = Instant.now();
-        this.likes = Collections.emptyList();
+        this.likeEntities = Collections.emptyList();
     }
 
     public Long getId() {
@@ -66,19 +65,19 @@ public class Post {
         this.createdAt = createdAt;
     }
 
-    public List<Like> getLikes() {
-        return likes;
+    public List<LikeEntity> getLikeEntities() {
+        return likeEntities;
     }
 
-    public void setLikes(List<Like> likes) {
-        this.likes = likes;
+    public void setLikeEntities(List<LikeEntity> likeEntities) {
+        this.likeEntities = likeEntities;
     }
 
-    public List<Comment> getComments() {
-        return comments;
+    public List<CommentEntity> getCommentEntities() {
+        return commentEntities;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    public void setCommentEntities(List<CommentEntity> commentEntities) {
+        this.commentEntities = commentEntities;
     }
 }
