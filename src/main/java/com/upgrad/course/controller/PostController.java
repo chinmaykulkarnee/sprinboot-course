@@ -19,7 +19,7 @@ public class PostController {
         this.postService = postService;
     }
 
-    // TODO: Define API Endpoint for getting comments of a post with limit
+    // TODO: Define an API Endpoint for getting details of a post by postId
     //  Use @RequestMapping annotation with value and method arguments for defining the API
     //  Define "postId" as a path parameter
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.GET)
@@ -34,7 +34,7 @@ public class PostController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // TODO: Define API Endpoint for getting comments of a post with limit
+    // TODO: Define an API Endpoint for getting comments of a post with a limit
     //  Define "postId" as a path parameter
     //  Define "limit" as a query parameter and use appropriate annotation to receive it as a method argument
     @GetMapping("/posts/{postId}/comments")
