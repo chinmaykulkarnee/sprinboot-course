@@ -20,15 +20,11 @@
     </properties>
 
     <dependencies>
-        <!-- TODO: Add spring boot starter dependency for spring boot web
-                Note: you do not have to specify the version since it is already taken care by the parent pam -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- TODO: Add spring boot starter dependency for embedded tomcat server
-                Note: you do not have to specify the version since it is already taken care by the parent pam -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
