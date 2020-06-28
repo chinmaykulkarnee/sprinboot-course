@@ -6,10 +6,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Address {
+public class AddressEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long registrationNumber;
 
     private String houseNumber;
 
@@ -21,10 +21,10 @@ public class Address {
 
     private int pinCode;
 
-    public Address() {
+    public AddressEntity() {
     }
 
-    public Address(String houseNumber, String streetName, String city, String state, int pinCode) {
+    public AddressEntity(String houseNumber, String streetName, String city, String state, int pinCode) {
         this.houseNumber = houseNumber;
         this.streetName = streetName;
         this.city = city;
@@ -32,12 +32,12 @@ public class Address {
         this.pinCode = pinCode;
     }
 
-    public Long getId() {
-        return id;
+    public Long getRegistrationNumber() {
+        return registrationNumber;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setRegistrationNumber(Long id) {
+        this.registrationNumber = id;
     }
 
     public String getHouseNumber() {
